@@ -1,0 +1,275 @@
+---
+title: "Crime-Rate in Chicago: A Data Analysis Overview"
+Author: "Nojus Satikauskas"
+date: "2024-04-16"
+ID: C00261186
+Lecturer: Agnes
+Programe: Software Development KCSOF_B
+Module: Data Visualisation
+output:
+  word_document: default
+  html_document: default
+---
+
+# Crime-Rate in Chicago: Introduction
+
+Chicago, the third-most populous city in the United States, has a long-standing reputation for its vibrant culture, diverse communities, and unfortunately, its crime rate. The dataset "Crimes_2001_to_Present.csv" offers a glimpse into the trends and patterns of criminal activities spanning over two decades. This analysis, we'll explore various aspects of the dataset, from its structure to uncovering insights about crime.
+
+## Understanding the Dataset
+
+The dataset comprises records of criminal incidents reported in Chicago, covering a wide range of variables. Here's a brief overview of the dataset's structure and contents:
+
+- **ID**: A unique identifier for each crime incident.
+- **Case Number**: A case number associated with the incident.
+- **Date**: The date and time when the incident occurred.
+- **Block**: The block address where the incident took place.
+- **Primary Type**: The primary classification of the crime.
+- **Description**: A detailed description of the crime.
+- **Location Description**: Description of the location where the incident occurred.
+- **Arrest**: Indicates whether an arrest was made in connection with the incident.
+- **Domestic**: Indicates whether the incident involved domestic violence.
+- **District, Ward, Community Area**: Geographic information about the location of the incident.
+- **FBI Code**: FBI classification of the crime.
+- **Latitude, Longitude**: Geographic coordinates of the incident location.
+
+
+### Dataset Overview
+
+The dataset contains over 700,000 rows, each representing a reported crime incident. 
+
+## Research Questions/Problem
+
+The document "Crime-Rate in Chicago: A Data Analysis Overview" tackles several critical research questions surrounding crime dynamics in Chicago, aiming to uncover insights crucial for addressing public safety challenges. One primary question addressed is the temporal trend of crime rates over two decades, seeking to understand patterns of change and identify factors contributing to fluctuations in reported incidents. Additionally, the analysis delves into the types of crimes prevalent in the city, shedding light on the distribution and frequency of various offense categories to inform targeted intervention strategies.
+
+Moreover, the document examines the spatial distribution of crimes across different districts and locations within Chicago, aiming to identify crime hotspots and guide resource allocation for law enforcement efforts. It also explores the outcomes of law enforcement actions, particularly focusing on arrest rates and the prevalence of domestic-related incidents, to assess the effectiveness of crime prevention measures and address systemic challenges within the criminal justice system.
+
+Overall, the document addresses multifaceted research questions concerning crime trends, types, locations, arrest outcomes, and domestic incidents, offering valuable insights for policymakers, law enforcement agencies, and community stakeholders to develop evidence-based strategies for enhancing public safety and reducing crime in Chicago.
+
+## Rationale
+
+Understanding the intricacies of crime dynamics in Chicago is imperative for developing effective strategies to ensure public safety and mitigate criminal activities. By conducting a comprehensive data analysis, this study aims to provide policymakers, law enforcement agencies, and community stakeholders with valuable insights into crime trends, types, locations, and arrest outcomes. By identifying patterns and hotspots, the analysis seeks to inform targeted interventions aimed at addressing root causes, enhancing law enforcement effectiveness, and fostering collaborative efforts to create safer neighborhoods. Ultimately, the rationale behind this study lies in its potential to drive evidence-based decision-making and facilitate collective action to build a safer and more resilient city for all residents.
+
+### Crime Trends Over Time
+
+Let's start by examining the trends in crime rates over the years. We can visualize the number of reported crimes each year using a bar graph. From this visualization, we can identify any significant changes or patterns in crime rates over the years.
+
+### Types of Crimes
+
+Next, we'll delve into the different types of crimes reported in Chicago. By counting the occurrences of each crime type and visualizing them using a bar graph, we can identify the most prevalent types of crimes in the city.
+
+### Crime Locations
+
+Understanding where crimes occur is crucial for law enforcement and urban planning. We'll analyze the location descriptions associated with reported crimes and visualize the frequency of crimes at different locations using a bar chart. This will help identify hotspots or areas with a high concentration of criminal activities.
+
+### Arrests and Domestic Incidents
+
+We'll also explore the arrest rates for reported crimes and investigate the prevalence of domestic incidents. By counting the occurrences of arrests and domestic incidents and visualizing them using bar graphs or pie charts, we can gain insights into law enforcement effectiveness and the prevalence of domestic violence in the city.
+
+## Data manipulation 
+The data used within this document has since been cleaned via the removal of removing of duplicates within the code. This makes the predictions and graphs more accurate as duplicates can no longer influence the resluts of the plot. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+# Load necessary libraries
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+df <- read.csv('C:/Users/Nojus/Desktop/Web/DataVisProject/Crimes_2001_to_Present.csv')
+```
+
+```{r}
+df <- unique(df)
+```
+
+
+```{r}
+cat('Number of Duplicates after Removal:', sum(duplicated(df)), '\n')
+```
+#Data Presentation:
+# Graphing crime reports based on the Year
+```{r}
+df_year <- df %>%
+  count(Year)
+
+ggplot(df_year, aes(x = Year, y = n)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Number of Crimes Over the Years",
+       x = "Year",
+       y = "Number of Crimes") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::comma)  # Displaying numeric values without scientific notation
+```
+### Decline in Crime Rates in Chicago: 2002 to 2023
+
+From its peak in 2002 to its lowest point in 2023, the number of reported crimes in Chicago has undergone a remarkable decline. This downward trend reflects concerted efforts by law enforcement agencies, community organizations, and policymakers to address the root causes of crime and implement effective crime prevention strategies.
+
+Factors contributing to this decline may include:
+
+- **Targeted Policing Initiatives:** Enhanced law enforcement strategies focused on high-crime areas and repeat offenders.
+- **Community Outreach Programs:** Engaging communities in crime prevention efforts and building trust between residents and law enforcement.
+- **Investments in Education and Social Services:** Providing opportunities for at-risk individuals and addressing socio-economic inequalities.
+- **Advancements in Technology:** Utilizing innovative tools for crime detection, surveillance, and analysis.
+- **Demographic and Economic Changes:** Shifts in population demographics, economic conditions, and cultural norms influencing crime dynamics.
+
+Despite ongoing challenges, the sustained reduction in crime underscores the city's resilience and collective commitment to fostering safer communities for all residents and visitors.
+
+# Graphing the number of crime reports based on districts it's located
+```{r}
+# Plotting the bar graph
+ggplot(df_filtered, aes(x = factor(District), y = Count)) +
+  geom_bar(fill = "steelblue", stat = "identity") +  # Customizing fill color
+  labs(x = 'District', y = 'Number of Crimes Committed') +
+  scale_x_discrete(labels = seq(1, 25)) +  # Setting custom x-axis labels
+  scale_y_continuous(labels = scales::comma) +  # Formatting y-axis labels as integers
+  theme_minimal() +  # Using a minimal theme
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust = 1)) +  # Rotating x-axis labels
+  ggtitle("Number of Crime Reports by District") +  # Adding a title
+  theme(plot.title = element_text(face = "bold", size = 16)) +  # Customizing title font
+  theme(axis.title.x = element_blank(), axis.text.y = element_text(size = 12))  # Removing x-axis title and adjusting y-axis text size
+
+
+
+
+```
+
+### Analysis of Crime Reports by District in Chicago
+
+The bar graph presents an overview of reported crime incidents distributed across different districts in Chicago. Districts serve as pivotal administrative units for law enforcement, each bearing responsibility for maintaining public safety within its jurisdiction.
+
+From the graph, it's evident that the distribution of reported crimes varies significantly among districts. Districts 7 and 11 exhibit markedly higher crime rates compared to Districts 20 and 21, which demonstrate relatively lower incidence of criminal activity.
+
+Understanding these divergences is vital for law enforcement agencies and policymakers to formulate targeted interventions effectively. Districts with elevated crime rates may necessitate intensified policing efforts, community engagement initiatives, and provision of social services to address underlying factors contributing to crime.
+
+Analyzing crime patterns across districts empowers authorities to discern trends, identify hotspots, and anticipate emerging challenges, thereby enabling proactive measures to enhance public safety and mitigate criminal activity citywide.
+
+# Graphing the occurrences of each type of offense
+
+```{r}
+# Counting the occurrences of each type of offense
+offense_counts <- df %>% 
+  count(Primary.Type)
+
+# Plotting the bar graph with color-coding
+ggplot(offense_counts, aes(x = fct_reorder(Primary.Type, n), y = n, fill = Primary.Type)) +
+  geom_bar(stat = "identity") +  # Use stat = "identity" to plot counts directly
+  labs(x = 'Offense Type', y = 'Number of Crimes Committed') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+
+```
+
+### Insights into Crime Patterns
+
+The bar graph reveals intriguing insights into crime trends in Chicago, showcasing the prevalence of different offense types. Surprisingly, non-violent crimes, such as theft and property damage, appear to outnumber violent offenses. This observation prompts a deeper exploration into the factors driving this phenomenon.
+
+Non-violent crimes often offer perpetrators opportunities for financial gain with reduced risk compared to violent offenses. Socioeconomic disparities, coupled with the ease of access to vulnerable targets, likely contribute to the higher incidence of non-violent crimes. Moreover, the urban landscape of Chicago, characterized by densely populated areas and diverse socioeconomic demographics, may create conducive conditions for such offenses to thrive.
+
+To address these trends effectively, comprehensive crime prevention strategies must tackle root causes while also targeting specific crime types. Such efforts are essential for ensuring the safety and well-being of Chicago's residents and visitors.
+
+# Graphing the crimes based on if they are domestic
+```{r}
+# Counting the occurrences of crimes based on if they are domestic
+domestic_counts <- df %>% 
+  count(Domestic)
+
+# Calculate percentage manually
+domestic_counts <- domestic_counts %>%
+  mutate(percentage = n / sum(n) * 100)
+
+# Plotting the pie chart
+ggplot(domestic_counts, aes(x = "", y = n, fill = Domestic)) +
+  geom_bar(stat = "identity", width = 1) +  # Use stat = "identity" to plot counts directly
+  coord_polar(theta = "y") +  # Convert the bar plot into a pie chart
+  labs(x = NULL, y = NULL, fill = "Domestic") +
+  scale_fill_manual(values = c("true" = "skyblue", "false" = "salmon")) +  # Color mapping
+  geom_text(aes(label = paste0(round(percentage), "%")), position = position_stack(vjust = 0.5)) +  # Add percentage labels
+  ggtitle("Percentage of Crimes that are Domestic") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 16))
+
+
+```
+
+### Crimes Based on Domestic Status
+
+The pie chart offers a vivid portrayal of the prevalence of domestic-related crimes within the dataset. Surprisingly, despite the diverse array of criminal incidents captured, an astonishing [percentage]% are classified as domestic in nature. This substantial portion underscores the intricate web of interpersonal dynamics at play within households or among individuals with preexisting relationships. The data hints at a sobering reality wherein disputes or conflicts within intimate settings escalate to criminal acts, further elucidating the complex interplay of emotions, power dynamics, and social pressures that can catalyze criminal behavior. Domestic-related crimes, encompassing a spectrum from verbal altercations to physical violence, pose unique challenges for law enforcement and support services due to the often-private nature of these incidents and the complex emotions involved. Addressing this substantial portion of reported crimes necessitates not only targeted interventions but also a comprehensive approach that addresses underlying issues such as domestic violence, mental health support, and social welfare programs tailored to fostering healthier relationships and safer environments within homes and communities.
+
+
+# Graphing crimes where people were arrested or not
+```{r}
+# Counting the occurrences of crimes based on arrest
+arrest_counts <- df %>% 
+  count(Arrest)
+
+# Calculate percentage manually
+arrest_counts <- arrest_counts %>%
+  mutate(percentage = n / sum(n) * 100)
+
+# Plotting the pie chart
+ggplot(arrest_counts, aes(x = "", y = n, fill = Arrest)) +
+  geom_bar(stat = "identity", width = 1) +  # Use stat = "identity" to plot counts directly
+  coord_polar(theta = "y") +  # Convert the bar plot into a pie chart
+  labs(x = NULL, y = NULL, fill = "Arrest Type") +
+  scale_fill_manual(values = c("true" = "skyblue", "false" = "salmon")) +  # Color mapping
+  geom_text(aes(label = paste0(round(percentage), "%")), position = position_stack(vjust = 0.5)) +  # Add percentage labels
+  ggtitle("Percentage of Crimes Based on Arrest") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 16))
+
+
+```
+#### Crimes Based on Arrest Status
+
+The pie chart examining the arrest status of reported crimes sheds light on the outcomes of law enforcement efforts within the dataset. Strikingly, a mere [percentage]% of reported crimes culminate in arrests, signaling a significant gap between criminal incidents and the successful apprehension of offenders. This disparity underscores the multifaceted challenges inherent in law enforcement operations, ranging from procedural hurdles to systemic limitations that impede the process of identifying and prosecuting perpetrators.
+
+Several factors contribute to the relatively low arrest rate observed in the data. Firstly, the burden of proof required for arrest and subsequent conviction necessitates substantial evidence, often requiring thorough investigations and corroborating testimonies. However, challenges such as insufficient evidence, conflicting accounts, or lack of witnesses can hinder the progress of criminal investigations, leading to cases remaining unresolved.
+
+Moreover, witness reluctance or fear of reprisal can complicate law enforcement efforts, particularly in cases involving organized crime, gang-related activities, or entrenched criminal networks. This reluctance to cooperate with authorities not only impedes the gathering of crucial evidence but also undermines community trust in law enforcement, further complicating crime-solving endeavors.
+
+# Graphing crimes based on
+```{r}
+# Counting the occurrences of crimes based on location
+location_counts <- df %>% 
+  count(Location.Description)
+
+# Filtering out locations with less than 10 occurrences
+location_counts_filtered <- location_counts %>%
+  filter(n >= 10000)
+
+# Plotting the bar graph
+ggplot(location_counts_filtered, aes(x = Location.Description, y = n)) +
+  geom_bar(stat = "identity") +  # Use stat = "identity" to plot counts directly
+  labs(x = 'Location', y = 'Number of Crimes Committed') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  ggtitle("Number of Crimes Based on Location (Occurrences >= 10)") +
+  theme(plot.title = element_text(face = "bold", size = 16))
+
+```
+
+
+#### Crimes Based on Location
+
+The bar graph provides a comprehensive overview of reported crime distribution across different locations in Chicago, offering valuable insights into spatial crime patterns within the city. By focusing on areas with a substantial volume of incidents, the graph effectively highlights prominent crime hotspots, enabling law enforcement agencies and policymakers to prioritize resources and interventions strategically.
+
+Notably, "RESIDENCE", "STREET", and "APARTMENT" emerge as the primary epicenters of criminal activities based on the dataset. This finding underscores the importance of targeted intervention strategies and proactive policing measures to address the underlying factors contributing to elevated crime rates in these specific areas.
+
+The identification of these crime hotspots serves as a critical starting point for law enforcement agencies and community stakeholders to implement tailored initiatives aimed at crime prevention and reduction. Strategies such as community policing, enhanced surveillance, and environmental design interventions can help mitigate criminal activities and foster safer environments for residents and businesses.
+
+Furthermore, collaboration between law enforcement agencies, local government authorities, community organizations, and residents is essential to develop holistic approaches to crime prevention. By fostering partnerships and engaging with communities affected by crime, stakeholders can leverage collective resources and expertise to address root causes and implement sustainable solutions.
+
+## Conclusion
+In light of the insightful findings revealed by the data analysis, various stakeholders, including the government, local communities, and law enforcement agencies, can leverage this information to implement targeted strategies aimed at enhancing public safety and reducing crime in Chicago.
+
+For the government, the data underscores the importance of prioritizing crime prevention initiatives and allocating resources effectively to address the root causes of criminal behavior. By investing in social welfare programs, education, and economic opportunities, policymakers can tackle underlying factors such as poverty, unemployment, and lack of access to resources that contribute to crime.
+
+Local communities play a crucial role in crime prevention efforts by fostering strong social networks, promoting neighborhood watch programs, and engaging in collaborative efforts with law enforcement agencies. By fostering a sense of community cohesion and resilience, residents can create safer environments and deter criminal activities in their neighborhoods.
+
+Law enforcement agencies can utilize the insights gleaned from the data analysis to inform their policing strategies and resource allocation decisions. Identifying crime hotspots and deploying targeted patrols, community policing initiatives, and proactive intervention measures can help deter criminal activities and improve public safety outcomes.
+
+
+In conclusion, the data analysis provides valuable insights into the dynamics of crime in Chicago and highlights opportunities for collaborative action to address the root causes of criminal behavior and create safer communities for all residents. By leveraging these insights and implementing evidence-based strategies, stakeholders can work together to build a safer and more resilient city for future generations.
+```
